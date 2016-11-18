@@ -1,8 +1,17 @@
 var fs = require('fs')
 var spawn = require('child_process').spawn
+var configFile
+
+if (process.platform === 'win32') {
+  configFile = process.env.USERPROFILE + '\\Desktop\\'
+} else {
+  configFile = process.env.HOME + '/Desktop/'
+}
+
+configFile += '.globalCommands'
 
 try {
-  var config = JSON.parse(fs.readFileSync(process.env.USERPROFILE + '\\Desktop\\.globalCommands', 'utf8'));
+  var config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
 } catch(err) {
   console.log('Could not read .globalCommands from your Desktop! Make sure you escape any \\ in your .globalCommands')
   throw err
@@ -43,7 +52,7 @@ var cmd = ''
 var args = []
 
 parts.forEach(function(part, index) {
-  if (part == 'npm') {
+  if (part == 'npm' && process.platform === 'win32') {
     part += '.cmd'
   }
 
@@ -54,16 +63,23 @@ parts.forEach(function(part, index) {
   }
 })
 
-var ls = spawn(cmd, args, options)
+console.log(cmd, parts)
 
-ls.stdout.on('data', function (data) {
-  console.log(data.toString());
-});
+try {
+  var ls = spawn(cmd, args, options)
 
-ls.stderr.on('data', function (data) {
-  console.log(data.toString());
-});
+  ls.stdout.on('data', function (data) {
+    console.log(data.toString());
+  });
 
-ls.on('exit', function (code) {
-  console.log('child process exited with code ' + code.toString());
-});
+  ls.stderr.on('data', function (data) {
+    console.log(data.toString());
+  });
+
+  ls.on('exit', function (code) {
+    console.log('child process exited with code ' + code.toString());
+  });
+} catch(err) {
+  console.log('Could not run command')
+  throw err
+}

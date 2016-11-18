@@ -1,0 +1,21 @@
+{
+  "name": "global-commands",
+  "version": "1.0.0",
+  "description": "Run npm commands from any directory based off a config file on the desktop",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cajacko/global-commands.git"
+  },
+  "author": "Charlie Jackson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cajacko/global-commands/issues"
+  },
+  "homepage": "https://github.com/cajacko/global-commands#readme",
+  "dependencies": {}
+}

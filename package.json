@@ -1,6 +1,6 @@
 {
   "name": "global-commands",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Run npm commands from any directory based off a config file on the desktop",
   "main": "index.js",
   "scripts": {

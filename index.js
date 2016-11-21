@@ -64,8 +64,6 @@ parts.forEach(function(part, index) {
   }
 })
 
-console.log(cmd, parts)
-
 try {
   var ls = spawn(cmd, args, options)
 

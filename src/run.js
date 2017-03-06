@@ -1,5 +1,5 @@
 const winston = require('winston');
-const spawn = require('child_process').spawn;
+const spawn = require('child_process').spawnSync;
 
 module.exports = function run(dir, script, params) {
   const windowsEnvironment = /^win/.test(process.platform);
@@ -26,19 +26,7 @@ module.exports = function run(dir, script, params) {
   const args = ['run', runScript].concat(runParams);
 
   try {
-    const ls = spawn(cmd, args, { cwd: dir });
-
-    ls.stdout.on('data', (data) => {
-      winston.log('info', data.toString());
-    });
-
-    ls.stderr.on('data', (data) => {
-      winston.log('info', data.toString());
-    });
-
-    ls.on('exit', (code) => {
-      winston.log('info', `child process exited with code ${code.toString()}`);
-    });
+    spawn(cmd, args, { cwd: dir, stdio: 'inherit' });
   } catch (err) {
     winston.log('error', 'Could not run command');
     throw err;

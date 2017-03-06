@@ -10,7 +10,7 @@
     "eslint": "eslint"
   },
   "bin": {
-    "globCom": "index.js"
+    "globCom": "src/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,12 @@
   },
   "homepage": "https://github.com/cajacko/global-commands#readme",
   "dependencies": {
+    "command-line-args": "4.0.1",
+    "command-line-commands": "2.0.0",
+    "directory-exists": "1.0.1",
+    "path-exists": "3.0.0",
+    "prompt": "1.0.0",
+    "user-settings": "git+https://github.com/cajacko/user-settings.git",
     "winston": "2.3.1"
   },
   "devDependencies": {

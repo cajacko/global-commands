@@ -1,86 +1,92 @@
 #!/usr/bin/env node
-var fs = require('fs')
-var spawn = require('child_process').spawn
-var configFile
+
+const fs = require('fs');
+const spawn = require('child_process').spawn;
+const winston = require('winston');
+
+let configFile;
+let config;
 
 if (process.platform === 'win32') {
-  configFile = process.env.USERPROFILE + '\\Desktop\\'
+  configFile = `${process.env.USERPROFILE}\\Desktop\\`;
 } else {
-  configFile = process.env.HOME + '/Desktop/'
+  configFile = `${process.env.HOME}/Desktop/`;
 }
 
-configFile += '.globalCommands'
+configFile += '.globalCommands';
 
 try {
-  var config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
-} catch(err) {
-  console.log('Could not read .globalCommands from your Desktop! Make sure you escape any \\ in your .globalCommands')
-  throw err
+  config = JSON.parse(fs.readFileSync(configFile, 'utf8'));
+} catch (err) {
+  winston.log('error', 'Could not read .globalCommands from your Desktop! Make sure you escape any \\ in your .globalCommands');
+  throw err;
 }
 
-var param = process.argv[2]
+const param = process.argv[2];
 
 if (!param) {
-  throw "No command specified"
+  throw new Error('No command specified');
 }
 
-var command = config[param]
+const command = config[param];
 
 if (!command) {
-  throw "Command does not exist in .globalCommands on the Desktop"
+  throw new Error('Command does not exist in .globalCommands on the Desktop');
 }
 
-var execute
-var options = {}
+let execute;
+const options = {};
 
 if (typeof command === 'object') {
   if (!command.directory) {
-    throw 'No directory paramater given for ' + param + ' in .globalCommands Either specify a command as a string or an object with a directory and command property'
+    throw new Error(`No directory paramater given for ${param} in .globalCommands Either specify a command as a string or an object with a directory and command property`);
   }
 
   if (!command.command) {
-    throw 'No command paramater given for ' + param + ' in .globalCommands Either specify a command as a string or an object with a directory and command property'
+    throw new Error(`No command paramater given for ${param} in .globalCommands Either specify a command as a string or an object with a directory and command property`);
   }
 
-  options.cwd = command.directory
-  execute = command.command
+  options.cwd = command.directory;
+  execute = command.command;
 } else {
-  execute = command
+  execute = command;
 }
 
-var parts = execute.split(' ')
-var cmd = ''
-var args = []
+const parts = execute.split(' ');
+let cmd = '';
+const args = [];
 
-parts.forEach(function(part, index) {
-  if (part == 'npm' && process.platform === 'win32') {
-    part += '.cmd'
+parts.forEach((part, index) => {
+  let initCommand = part;
+
+  if (initCommand === 'npm' && process.platform === 'win32') {
+    initCommand += '.cmd';
   }
 
-  if (index == 0) {
-    cmd = part
+  if (index === 0) {
+    cmd = initCommand;
   } else {
-    args.push(part)
+    args.push(initCommand);
   }
-})
+});
 
-console.log(cmd, parts)
+winston.log('info', cmd, parts);
 
 try {
-  var ls = spawn(cmd, args, options)
+  const ls = spawn(cmd, args, options);
 
-  ls.stdout.on('data', function (data) {
-    console.log(data.toString());
+  ls.stdout.on('data', (data) => {
+    winston.log('info', data.toString());
   });
 
-  ls.stderr.on('data', function (data) {
-    console.log(data.toString());
+  ls.stderr.on('data', (data) => {
+    winston.log('info', data.toString());
   });
 
-  ls.on('exit', function (code) {
-    console.log('child process exited with code ' + code.toString());
+  ls.on('exit', (code) => {
+    winston.log('error', `child process exited with code ${code.toString()}`);
   });
-} catch(err) {
-  console.log('Could not run command')
-  throw err
+} catch (err) {
+  winston.log('error', 'Could not run command');
+  throw err;
 }

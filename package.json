@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint **/*.js",
+    "eslint": "eslint"
   },
   "bin": {
     "globCom": "index.js"
@@ -20,5 +22,15 @@
     "url": "https://github.com/cajacko/global-commands/issues"
   },
   "homepage": "https://github.com/cajacko/global-commands#readme",
-  "dependencies": {}
+  "dependencies": {
+    "winston": "2.3.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "7.1.1",
+    "eslint": "3.17.0",
+    "eslint-config-airbnb": "14.1.0",
+    "eslint-plugin-import": "2.2.0",
+    "eslint-plugin-jsx-a11y": "4.0.0",
+    "eslint-plugin-react": "6.10.0"
+  }
 }
